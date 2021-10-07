@@ -11,6 +11,8 @@ var __assign = (this && this.__assign) || function () {
 };
 import { NativeModules, NativeEventEmitter, Platform } from "react-native";
 import * as EPToolkit from "./utils/EPToolkit";
+import BufferHelper from "./utils/buffer-helper";
+import { Buffer } from 'buffer';
 var RNUSBPrinter = NativeModules.RNUSBPrinter;
 var RNBLEPrinter = NativeModules.RNBLEPrinter;
 var RNNetPrinter = NativeModules.RNNetPrinter;
@@ -24,6 +26,13 @@ var textTo64Buffer = function (text, opts) {
     var options = __assign(__assign({}, defaultOptions), opts);
     var buffer = EPToolkit.exchange_text(text, options);
     return buffer.toString("base64");
+};
+var bytesToString = function (data, type) {
+    var bytes = new BufferHelper();
+    bytes.concat(Buffer.from(data));
+    var buffer = bytes.toBuffer();
+    // console.log('string to print : ', buffer.toString(type))
+    return buffer.toString(type);
 };
 var billTo64Buffer = function (text, opts) {
     var defaultOptions = {
@@ -44,19 +53,17 @@ var textPreprocessingIOS = function (text) {
     return {
         text: text
             .replace(/<\/?CB>/g, "")
-            .replace(/<\/?CM>/g, "")
-            .replace(/<\/?CD>/g, "")
             .replace(/<\/?C>/g, "")
-            .replace(/<\/?D>/g, "")
-            .replace(/<\/?B>/g, "")
-            .replace(/<\/?M>/g, ""),
+            .replace(/<\/?B>/g, ""),
         opts: options,
     };
 };
+
 // const imageToBuffer = async (imagePath: string, threshold: number = 60) => {
 //   const buffer = await EPToolkit.exchange_image(imagePath, threshold);
 //   return buffer.toString("base64");
 // };
+
 export var USBPrinter = {
     init: function () {
         return new Promise(function (resolve, reject) {
@@ -185,6 +192,41 @@ export var NetPrinter = {
             });
         }
     },
+    printRawData: function (data, onError) {
+        if (onError === void 0) { onError = function () { }; }
+        if (Platform.OS === "ios") {
+            var processedText = bytesToString(data, 'hex');
+            RNNetPrinter.printHex(processedText, { beep: false, cut: false }, function (error) {
+                if (onError) {
+                    onError(error);
+                }
+            });
+        }
+        else {
+            RNNetPrinter.printRawData(bytesToString(data, 'base64'), function (error) {
+                if (onError) {
+                    onError(error);
+                }
+            });
+        }
+    },
+    printImage: function (data,width, onError){
+        if (onError === void 0) { onError = function () { }; }
+        if (Platform.OS === "ios") {
+            RNNetPrinter.printImage(data,{width:width}, function (error) {
+                if (onError) {
+                    onError(error);
+                }
+            });
+        }
+        else {
+            RNNetPrinter.printImage(data,width, function (error) {
+                if (onError) {
+                    onError(error);
+                }
+            });
+        }
+    }
 };
 export var NetPrinterEventEmitter = new NativeEventEmitter(RNNetPrinter);
 export var RN_THERMAL_RECEIPT_PRINTER_EVENTS;
