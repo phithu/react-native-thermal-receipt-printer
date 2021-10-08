@@ -1,4 +1,3 @@
-import { NativeEventEmitter } from "react-native";
 export interface PrinterOptions {
     beep?: boolean;
     cut?: boolean;
@@ -45,8 +44,3 @@ export declare const NetPrinter: {
     printRawData: (data: Uint8Array, onError?: (error: Error) => void) => void;
     printImage: (data: string,width: number, onError?: (error: Error) => void) => void;
 };
-export declare const NetPrinterEventEmitter: NativeEventEmitter;
-export declare enum RN_THERMAL_RECEIPT_PRINTER_EVENTS {
-    EVENT_NET_PRINTER_SCANNED_SUCCESS = "scannerResolved",
-    EVENT_NET_PRINTER_SCANNED_ERROR = "registerError"
-}
