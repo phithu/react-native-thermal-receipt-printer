@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { NativeModules, NativeEventEmitter, Platform } from "react-native";
+import { NativeModules, Platform } from "react-native";
 import * as EPToolkit from "./utils/EPToolkit";
 import BufferHelper from "./utils/buffer-helper";
 import { Buffer } from 'buffer';
@@ -228,9 +228,3 @@ export var NetPrinter = {
         }
     }
 };
-export var NetPrinterEventEmitter = new NativeEventEmitter(RNNetPrinter);
-export var RN_THERMAL_RECEIPT_PRINTER_EVENTS;
-(function (RN_THERMAL_RECEIPT_PRINTER_EVENTS) {
-    RN_THERMAL_RECEIPT_PRINTER_EVENTS["EVENT_NET_PRINTER_SCANNED_SUCCESS"] = "scannerResolved";
-    RN_THERMAL_RECEIPT_PRINTER_EVENTS["EVENT_NET_PRINTER_SCANNED_ERROR"] = "registerError";
-})(RN_THERMAL_RECEIPT_PRINTER_EVENTS || (RN_THERMAL_RECEIPT_PRINTER_EVENTS = {}));
