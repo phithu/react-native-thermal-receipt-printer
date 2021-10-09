@@ -145,6 +145,24 @@ export var BLEPrinter = {
             });
         }
     },
+    printRawData: function (data, onError) {
+        if (onError === void 0) { onError = function () { }; }
+        if (Platform.OS === "ios") {
+            var processedText = bytesToString(data, 'hex');
+            RNBLEPrinter.printHex(processedText, { beep: false, cut: false }, function (error) {
+                if (onError) {
+                    onError(error);
+                }
+            });
+        }
+        else {
+            RNBLEPrinter.printRawData(bytesToString(data, 'base64'), function (error) {
+                if (onError) {
+                    onError(error);
+                }
+            });
+        }
+    },
 };
 export var NetPrinter = {
     init: function () {
