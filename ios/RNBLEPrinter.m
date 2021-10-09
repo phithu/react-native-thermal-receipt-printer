@@ -115,6 +115,27 @@ RCT_EXPORT_METHOD(printRawData:(NSString *)text
     }
 }
 
+RCT_EXPORT_METHOD(printHex:(NSString *)text
+                  printerOptions:(NSDictionary *)options
+                  fail:(RCTResponseSenderBlock)errorCallback) {
+    @try {
+        !m_printer ? [NSException raise:@"Invalid connection" format:@"printRawData: Can't connect to printer"] : nil;
+        
+        NSNumber* beepPtr = [options valueForKey:@"beep"];
+        NSNumber* cutPtr = [options valueForKey:@"cut"];
+        
+        BOOL beep = (BOOL)[beepPtr intValue];
+        BOOL cut = (BOOL)[cutPtr intValue];
+        NSLog(@"text in PrintHex is - %@", text);
+        
+        [[PrinterSDK defaultPrinterSDK] sendHex:text];
+        beep ? [[PrinterSDK defaultPrinterSDK] beep] : nil;
+        cut ? [[PrinterSDK defaultPrinterSDK] cutPaper] : nil;
+    } @catch (NSException *exception) {
+        errorCallback(@[exception.reason]);
+    }
+}
+
 RCT_EXPORT_METHOD(closeConn) {
     @try {
         !m_printer ? [NSException raise:@"Invalid connection" format:@"closeConn: Can't connect to printer"] : nil;
